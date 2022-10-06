@@ -37,13 +37,6 @@
 ### Date Manipulation
 
 - Dayjs
-- date-fns
-- Luxon
-
-### HTTP Client
-
-- Ky
-- Axios
 
 ### Global Store (full-blown / lite-version)
 
