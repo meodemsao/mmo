@@ -1,0 +1,236 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table User {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  username String [unique, not null]
+  password String [not null]
+  firstname String
+  lastname String
+  posts Post [not null]
+  accountLicense AccountLicense
+  subscriptions Sub [not null]
+}
+
+Table Role {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  name String [unique, not null]
+  description String [not null]
+}
+
+Table casbin_rule {
+  id Int [pk, increment]
+  ptype String [not null]
+  v0 String
+  v1 String
+  v2 String
+  v3 String
+  v4 String
+  v5 String
+}
+
+Table Post {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  published Boolean [not null]
+  title String [not null]
+  content String
+  author User
+  authorId String
+}
+
+Table MetaData {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  size Int [not null]
+  filename String [not null]
+  mine_type String [not null]
+  image Image
+}
+
+Table Image {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  url String [not null]
+  storage String [not null]
+  meta MetaData
+  metaId String [unique]
+}
+
+Table Product {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  title String [not null]
+  description String [not null]
+  stock Int [not null]
+  currency String [not null]
+  productType String [not null]
+  private Boolean [not null]
+  unlisted Boolean [not null]
+  vpn_block Boolean [not null]
+  seller_note String [not null]
+  maximumQuantity Int [not null]
+  minimumQuantity Int [not null]
+  stockDelimiter String [not null]
+  stockAmount Int [not null]
+  cryptoConfirmations Int [not null]
+  maxRiskLevel Int [not null]
+  dynamicUrl String [not null]
+  info String [not null]
+  webhookUrl String [not null]
+  categories ProductCategory [not null]
+}
+
+Table Category {
+  id String [pk]
+  name String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  products ProductCategory [not null]
+}
+
+Table ProductCategory {
+  product Product [not null]
+  productId String [not null]
+  category Category [not null]
+  categoryId String [not null]
+
+  indexes {
+    (productId, categoryId) [pk]
+  }
+}
+
+Table Order {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  email String [not null]
+  ipAddress String [not null]
+  countryCode String [not null]
+  productTitle String [not null]
+  userAgent String [not null]
+  gateway String [not null]
+  riskLevel Int [not null]
+  status OrderStatus [not null]
+  delivered Boolean [not null]
+  referral String [not null]
+  usdValue Int [not null]
+  exchangeRate Int [not null]
+  couponId String [not null]
+  orderItems OrderItem [not null]
+}
+
+Table OrderItem {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  value Int [not null]
+  quantity Int [not null]
+  currency String [not null]
+  order Order [not null]
+  orderId String [not null]
+}
+
+Table Plan {
+  id String [pk]
+  name String [not null]
+  price Float [not null]
+  duration Duration [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  subscriptions Sub [not null]
+}
+
+Table AccountLicense {
+  id String [pk]
+  userId String [unique, not null]
+  user User
+  licenseId String [unique, not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table License {
+  id String [pk]
+  key String [unique, not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table Sub {
+  id String [pk]
+  planId String [not null]
+  plan Plan [not null]
+  userId String [unique, not null]
+  user User [not null]
+  status SubscriptionStatus [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  subHistories SubHistory [not null]
+}
+
+Table SubHistory {
+  id String [pk]
+  subId String [not null]
+  sub Sub [not null]
+  startAt DateTime [not null]
+  expiredAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Enum Gateway {
+  paypal
+  bitcoin
+  ethereum
+  stripe
+  momo
+}
+
+Enum OrderStatus {
+  notPaid
+  chargeBack
+  highRisk
+  partiallyPaid
+  awaitingPaymentConfirmation
+  pendding
+  refunded
+  successful
+}
+
+Enum Duration {
+  Month
+  Year
+}
+
+Enum SubscriptionStatus {
+  Subscribe
+  Stop
+}
+
+Ref: Post.authorId > User.id
+
+Ref: Image.metaId - MetaData.id
+
+Ref: ProductCategory.productId > Product.id
+
+Ref: ProductCategory.categoryId > Category.id
+
+Ref: OrderItem.orderId > Order.id
+
+Ref: AccountLicense.userId - User.id
+
+Ref: Sub.planId > Plan.id
+
+Ref: Sub.userId > User.id
+
+Ref: SubHistory.subId > Sub.id

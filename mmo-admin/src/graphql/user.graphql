@@ -1,0 +1,24 @@
+fragment UserFields on User {
+  id
+  firstname
+  lastname
+  username
+}
+
+query users(
+  $where: UserWhereInput
+  $skip: Int
+  $take: Int
+  $orderBy: [UserOrderByWithRelationInput!]
+) {
+  users(where: $where, skip: $skip, take: $take, orderBy: $orderBy) {
+    nodes {
+      ...UserFields
+    }
+    totalCount
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}

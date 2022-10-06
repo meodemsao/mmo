@@ -1,0 +1,57 @@
+query me {
+  me {
+    id
+    username
+    firstname
+    lastname
+  }
+}
+
+mutation login($data: LoginInput!) {
+  login(data: $data) {
+    accessToken
+    refreshToken
+    user {
+      id
+      username
+    }
+  }
+}
+
+mutation signup($data: SignupInput!) {
+  signup(data: $data) {
+    accessToken
+    refreshToken
+    user {
+      id
+      username
+    }
+  }
+}
+
+mutation refreshToken($token: JWT!) {
+  refreshToken(token: $token) {
+    accessToken
+    refreshToken
+  }
+}
+
+mutation assignUser($rolename: String!, $username: String!) {
+  assignUser(rolename: $rolename, username: $username)
+}
+
+mutation deAssignUser($rolename: String!, $username: String!) {
+  deAssignUser(rolename: $rolename, username: $username)
+}
+
+mutation grantPermission($object: String!, $operation: String!, $role: String!) {
+  grantPermission(object: $object, operation: $operation, role: $role)
+}
+
+mutation grantPermissions($role: String!, $permissions: [PermissionInput!]!) {
+  grantPermissions(role: $role, permissions: $permissions)
+}
+
+mutation revokePermission($object: String!, $operation: String!, $role: String!) {
+  revokePermission(object: $object, operation: $operation, role: $role)
+}

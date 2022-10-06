@@ -1,0 +1,60 @@
+fragment RoleFields on Role {
+  id
+  name
+  description
+  createdAt
+}
+
+query roles(
+  $where: RoleWhereInput
+  $skip: Int
+  $take: Int
+  $orderBy: [RoleOrderByWithRelationInput!]
+) {
+  roles(where: $where, skip: $skip, take: $take, orderBy: $orderBy) {
+    nodes {
+      ...RoleFields
+    }
+    totalCount
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}
+
+query role($where: RoleWhereUniqueInput!) {
+  role(where: $where) {
+    ...RoleFields
+  }
+}
+
+query getUserRoles($username: String!) {
+  getUserRoles(username: $username)
+}
+
+query getRolePermissions($rolename: String!) {
+  getRolePermissions(rolename: $rolename)
+}
+
+query getUserPermissions($username: String!) {
+  getUserPermissions(username: $username)
+}
+
+mutation createOneRole($data: RoleCreateInput!) {
+  createOneRole(data: $data) {
+    ...RoleFields
+  }
+}
+
+mutation updateOneRole($where: RoleWhereUniqueInput!, $data: RoleUpdateInput!) {
+  updateOneRole(where: $where, data: $data) {
+    ...RoleFields
+  }
+}
+
+mutation deleteOneRole($name: String!) {
+  deleteOneRole(name: $name) {
+    ...RoleFields
+  }
+}

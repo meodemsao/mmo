@@ -1,0 +1,290 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  // previewFeatures = []
+}
+
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
+generator nestgraphql {
+  provider                              = "node node_modules/prisma-nestjs-graphql"
+  output                                = "../src/@generated"
+  noAtomicOperations                    = false
+  combineScalarFilters                  = false
+  reExport                              = None
+  emitSingle                            = false
+  emitCompiled                          = false
+  purgeOutput                           = false
+  requireSingleFieldsInWhereUniqueInput = false
+  fields_Validator_from                 = "class-validator"
+  fields_Validator_input                = true
+  fields_Scalars_from                   = "graphql-scalars"
+  fields_Scalars_input                  = true
+  useInputType_WhereInput_ALL           = "WhereInput"
+  decorate_1_type                       = "Create@(One|Many)UserArgs"
+  decorate_1_field                      = data
+  decorate_1_name                       = ValidateNested
+  decorate_1_from                       = "class-validator"
+  decorate_1_arguments                  = "[]"
+  decorate_2_type                       = "Create@(One|Many)UserArgs"
+  decorate_2_field                      = data
+  decorate_2_from                       = "class-transformer"
+  decorate_2_arguments                  = "['() => {propertyType.0}']"
+  decorate_2_name                       = Type
+  decorate_2_namedImport                = true
+  decorate_3_type                       = "ProfileUncheckedCreateNestedOneWithoutUserInput"
+  decorate_3_field                      = "!(create)"
+  decorate_3_name                       = "HideField"
+  decorate_3_from                       = "@nestjs/graphql"
+  decorate_3_arguments                  = "[]"
+}
+
+model User {
+  id                String          @id @default(cuid())
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  username          String          @unique
+  password          String
+  firstname         String?
+  lastname          String?
+  posts             Post[]
+  accountLicense    AccountLicense?
+	subscriptions     Sub[]
+	userTransactions  UserTransaction[]
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String   @unique
+  description String
+}
+
+model CasbinRule {
+  id    Int     @id @default(autoincrement())
+  ptype String
+  v0    String?
+  v1    String?
+  v2    String?
+  v3    String?
+  v4    String?
+  v5    String?
+
+  @@map("casbin_rule")
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  published Boolean
+  title     String
+  content   String?
+  author    User?    @relation(fields: [authorId], references: [id])
+  authorId  String?
+}
+
+enum Gateway {
+  paypal
+  bitcoin
+  ethereum
+  stripe
+  momo
+}
+
+model MetaData {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  size      Int
+  filename  String
+  mine_type String
+  image     Image?
+}
+
+model Image {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  url       String
+  storage   String
+  meta      MetaData? @relation(fields: [metaId], references: [id])
+  metaId    String?   @unique
+}
+
+model Product {
+  id                  String            @id @default(cuid())
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  title               String
+  description         String
+  stock               Int
+  currency            String
+  productType         String
+  private             Boolean
+  unlisted            Boolean
+  vpn_block           Boolean
+  seller_note         String
+  maximumQuantity     Int
+  minimumQuantity     Int
+  stockDelimiter      String
+  stockAmount         Int
+  cryptoConfirmations Int
+  maxRiskLevel        Int
+  dynamicUrl          String
+  info                String
+  webhookUrl          String
+  categories          ProductCategory[]
+}
+
+model Category {
+  id        String            @id @default(cuid())
+	name      String
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  products  ProductCategory[]
+}
+
+model ProductCategory {
+  product    Product  @relation(fields: [productId], references: [id])
+  productId  String
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+
+  @@id([productId, categoryId])
+}
+
+enum OrderStatus {
+  notPaid
+  chargeBack
+  highRisk
+  partiallyPaid
+  awaitingPaymentConfirmation
+  pendding
+  refunded
+  successful
+}
+
+model Order {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  email        String
+  ipAddress    String
+  countryCode  String
+  productTitle String
+  userAgent    String
+
+  gateway      String
+  riskLevel    Int
+  status       OrderStatus
+  delivered    Boolean
+  // crypto_value		Int
+  // crypto_address String
+  // crypto_channel String
+  // crypto_received Int
+  // crypto_confirmations Boolean
+  referral     String
+  usdValue     Int
+  exchangeRate Int
+  couponId     String
+  orderItems   OrderItem[]
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  value     Int
+  quantity  Int
+  currency  String
+  order     Order    @relation(fields: [orderId], references: [id])
+  orderId   String
+}
+
+enum Duration {
+  Month
+  Year
+}
+
+model Plan {
+  id            String         @id @default(cuid())
+  name          String
+  price         Float
+	duration      Duration
+	createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  subscriptions Sub[]
+}
+
+model AccountLicense {
+  id           String        @id @default(cuid())
+  userId       String        @unique
+  user         User?         @relation(fields: [userId], references: [id])
+  licenseId    String        @unique
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  // subscription Subscription?
+}
+
+model License {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum SubscriptionStatus {
+  Subscribe
+  Stop
+}
+
+model Sub {
+  id               String             @id @default(cuid())
+  planId           String
+  plan             Plan               @relation(fields: [planId], references: [id])
+  userId           String             @unique
+  user             User               @relation(fields: [userId], references: [id])
+  status           SubscriptionStatus
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+	subHistories 		SubHistory[]
+}
+
+model SubHistory {
+  id               String             @id @default(cuid())
+  subId            String
+	sub 		         Sub                @relation(fields: [subId], references: [id])
+  startAt          DateTime
+  expiredAt        DateTime
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+}
+
+enum Paygate {
+	Momo
+	ViettelPay
+	Vcbank
+	MbBank
+}
+
+model UserTransaction {
+  id               String             @id @default(cuid())
+  message          String
+	paygate 		     Paygate
+  amount           Float
+
+  userId           String?
+	user             User?    @relation(fields: [userId], references: [id])
+
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+}

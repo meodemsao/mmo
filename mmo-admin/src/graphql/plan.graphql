@@ -1,0 +1,50 @@
+fragment PlanFields on Plan {
+  id
+  name
+  price
+  duration
+  createdAt
+  updatedAt
+}
+
+query plans(
+  $where: PlanWhereInput
+  $skip: Int
+  $take: Int
+  $orderBy: [PlanOrderByWithRelationInput!]
+) {
+  plans(where: $where, skip: $skip, take: $take, orderBy: $orderBy) {
+    nodes {
+      ...PlanFields
+    }
+    totalCount
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}
+
+query plan($where: PlanWhereUniqueInput!) {
+  plan(where: $where) {
+    ...PlanFields
+  }
+}
+
+mutation createOnePlan($data: PlanCreateInput!) {
+  createOnePlan(data: $data) {
+    ...PlanFields
+  }
+}
+
+mutation updateOnePlan($where: PlanWhereUniqueInput!, $data: PlanUpdateInput!) {
+  updateOnePlan(where: $where, data: $data) {
+    ...PlanFields
+  }
+}
+
+mutation deleteOnePlan($where: PlanWhereUniqueInput!) {
+  deleteOnePlan(where: $where) {
+    ...PlanFields
+  }
+}

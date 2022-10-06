@@ -1,0 +1,47 @@
+fragment SubHistoryField on SubHistory {
+  id
+  startAt
+  expiredAt
+}
+
+query subHistories(
+  $where: SubHistoryWhereInput
+  $skip: Int
+  $take: Int
+  $orderBy: [SubHistoryOrderByWithRelationInput!]
+) {
+  subHistories(where: $where, skip: $skip, take: $take, orderBy: $orderBy) {
+    nodes {
+      ...SubHistoryField
+    }
+    totalCount
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}
+
+query subHistory($where: SubHistoryWhereUniqueInput!) {
+  subHistory(where: $where) {
+    ...SubHistoryField
+  }
+}
+
+mutation createOneSubHistory($data: SubHistoryCreateInput!) {
+  createOneSubHistory(data: $data) {
+    ...SubHistoryField
+  }
+}
+
+mutation updateOneSubHistory($where: SubHistoryWhereUniqueInput!, $data: SubHistoryUpdateInput!) {
+  updateOneSubHistory(where: $where, data: $data) {
+    ...SubHistoryField
+  }
+}
+
+mutation deleteOneSubHistory($where: SubHistoryWhereUniqueInput!) {
+  deleteOneSubHistory(where: $where) {
+    ...SubHistoryField
+  }
+}

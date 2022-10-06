@@ -1,0 +1,57 @@
+fragment SubFields on Sub {
+  id
+  plan {
+    ...PlanFields
+  }
+  user {
+    ...UserFields
+  }
+  subHistories {
+    ...SubHistoryField
+  }
+  status
+  createdAt
+  updatedAt
+}
+
+query subs(
+  $where: SubWhereInput
+  $skip: Int
+  $take: Int
+  $orderBy: [SubOrderByWithRelationInput!]
+) {
+  subs(where: $where, skip: $skip, take: $take, orderBy: $orderBy) {
+    nodes {
+      ...SubFields
+    }
+    totalCount
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}
+
+query sub($where: SubWhereUniqueInput!) {
+  sub(where: $where) {
+    ...SubFields
+  }
+}
+
+mutation createOneSub($data: SubCreateInput!) {
+  createOneSub(data: $data) {
+    ...SubFields
+  }
+}
+
+mutation updateOneSub($where: SubWhereUniqueInput!, $data: SubUpdateInput!) {
+  updateOneSub(where: $where, data: $data) {
+    ...SubFields
+  }
+}
+
+mutation deleteOneSub($where: SubWhereUniqueInput!) {
+  deleteOneSub(where: $where) {
+    ...SubFields
+  }
+}
